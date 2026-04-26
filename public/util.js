@@ -48,8 +48,6 @@ function parseSchedule(scheduleStr) {
 }
 
 function parseCourseName(raw) {
-    console.log(raw)
-
     const text = raw.replace(/<[^>]*>/g, " ");
     const get = (label) => {
         const match = text.match(

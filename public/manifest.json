@@ -1,7 +1,7 @@
 {
     "manifest_version": 3,
-    "name": "hehe",
-    "version": "1.0.0",
+    "name": "BetterFinder",
+    "version": "1.0.1",
     "permissions": ["storage", "tabs"],
     "action": {},
     "background": {
