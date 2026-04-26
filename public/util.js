@@ -48,8 +48,9 @@ function parseSchedule(scheduleStr) {
 }
 
 function parseCourseName(raw) {
-    const text = raw.replace(/<[^>]*>/g, " ");
+    console.log(raw)
 
+    const text = raw.replace(/<[^>]*>/g, " ");
     const get = (label) => {
         const match = text.match(
             new RegExp(`${label}\\s*:\\s*(.*?)\\s*(?=Room\\s*:|Teacher\\s*:|Co-Teacher\\s*:|Section\\s*:|Batch\\s*:|$)`, "i")
@@ -63,26 +64,34 @@ function parseCourseName(raw) {
     };
 }
 
+function isRoom(section) {
+    return section.room.toUpperCase() !== "ONLINE" && section.room.toUpperCase() !== "-"
+}
+
 function getRoom(parsedCourseNames, remarks) {
     const first = parsedCourseNames?.[0];
     const second = parsedCourseNames?.[1];
-    
+
     switch (remarks) {
         case "FOL": 
             return "Online"
         case "PIP":
             return first?.room
         case "HYB":
-            return first?.room.toUpperCase() !== "ONLINE" ? first?.room : second?.room
+            return isRoom(first) ? first?.room : second?.room
         default:
             return null
     }
 }
 
 function getRemarks(selected) {
+    
     if (selected[1] === undefined) return selected[0].room === "Online" ? "FOL" : "PIP"
-    if (selected[0].room.toUpperCase() === "ONLINE" && selected[1].room.toUpperCase() != "ONLINE") return "HYB"
-    if (selected[0].room.toUpperCase() != "ONLINE" && selected[1].room.toUpperCase() === "ONLINE") return "HYB"
+
+    if (isRoom(selected[0]) || isRoom(selected[1])) return "HYB"
+
+    //if (selected[0].room.toUpperCase() === "ONLINE" || selected[0].room.toUpperCase() === "-" && selected[1].room.toUpperCase() !== "ONLINE") return "HYB"
+    if (selected[0].room.toUpperCase() !== "ONLINE" && selected[1].room.toUpperCase() === "ONLINE") return "HYB"
     if (selected[0].room.toUpperCase() === "ONLINE" && selected[1].room.toUpperCase() === "ONLINE") return "FOL"
     
     return "PIP"
