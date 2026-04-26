@@ -61,19 +61,9 @@ class CourseAPI {
         const cf = await cfData.json()
         
         for (const c of cf) {
-            const scheduleData = await this.fetchScheduleData(
-                c.COURSE_CREATION_ID,
-                c.SECTION_CREATION_ID
-            );
-
-            courseSchedules.push(
-                cleanScheduleData(courseCode, c, scheduleData)
-            );
+            const scheduleData = await this.fetchScheduleData(c.COURSE_CREATION_ID,c.SECTION_CREATION_ID);
+            courseSchedules.push(cleanScheduleData(courseCode, c, scheduleData));
         }
-
-        courseSchedules.forEach(c => {
-            console.log(c)
-        })
 
         return courseSchedules;
     }

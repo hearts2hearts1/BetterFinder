@@ -73,7 +73,7 @@ function getRoom(parsedCourseNames, remarks) {
         case "PIP":
             return first?.room
         case "HYB":
-            return first?.room !== "Online" ? first?.room : second?.room
+            return first?.room.toUpperCase() !== "ONLINE" ? first?.room : second?.room
         default:
             return null
     }
@@ -81,10 +81,9 @@ function getRoom(parsedCourseNames, remarks) {
 
 function getRemarks(selected) {
     if (selected[1] === undefined) return selected[0].room === "Online" ? "FOL" : "PIP"
-    
-    if (selected[0].room === "Online" && selected[1].room != "Online") return "HYB"
-    if (selected[0].room != "Online" && selected[1].room === "Online") return "HYB"
-    if (selected[0].room === "Online" && selected[1].room === "Online") return "FOL"
+    if (selected[0].room.toUpperCase() === "ONLINE" && selected[1].room.toUpperCase() != "ONLINE") return "HYB"
+    if (selected[0].room.toUpperCase() != "ONLINE" && selected[1].room.toUpperCase() === "ONLINE") return "HYB"
+    if (selected[0].room.toUpperCase() === "ONLINE" && selected[1].room.toUpperCase() === "ONLINE") return "FOL"
     
     return "PIP"
 }
