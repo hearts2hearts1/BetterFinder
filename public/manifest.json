@@ -1,0 +1,17 @@
+{
+    "manifest_version": 3,
+    "name": "hehe",
+    "version": "1.0.0",
+    "permissions": ["storage", "tabs"],
+    "action": {},
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://archershub.dlsu.edu.ph/*"],
+            "js": ["content.js", "api.js", "util.js"],
+            "type": "module"
+        }
+    ]
+}
