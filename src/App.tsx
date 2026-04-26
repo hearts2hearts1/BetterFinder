@@ -2,6 +2,7 @@ import { useState } from "react";
 import Navbar from "./components/layout/Navbar";
 import OfferingsTable from "./components/layout/OfferingsTable";
 import SearchToolbar from "./components/layout/SearchToolbar";
+import NewUpdateDialog from "./components/layout/NewUpdateDialog";
 
 export default function App() {
 	const [courseCode, setCourseCode] = useState("")
@@ -18,6 +19,8 @@ export default function App() {
 					<OfferingsTable courseCode={courseCode} />
 				</div>
 			)}
+
+			<NewUpdateDialog />
 		</div>
 	)
 }
