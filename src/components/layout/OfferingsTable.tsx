@@ -1,14 +1,15 @@
 import { useCourseSchedule } from "@/hooks/useCourseSchedule";
 import { Badge } from "../ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-
+import OfferingsTableSkeleton from "./OfferingsTableSkeleton";
 
 export default function OfferingsTable({ courseCode }: { courseCode: string }) {
 	const { data, loading, error } = useCourseSchedule(courseCode);
 
-	if (loading) return <p className="text-zinc-500 text-sm p-4">Loading schedules...</p>;
-	if (error)   return <p className="text-red-400 text-sm p-4">{error}</p>;
-	if (!data.length) return <p className="text-zinc-600 text-sm p-4">No sections found.</p>;
+	if (loading) return <OfferingsTableSkeleton />
+	if (error)  return <p className="text-red-400 text-sm p-4 text-center">{error}</p>;
+	if (!data.length) return <p className="text-zinc-600 text-sm p-4 text-center">No sections found.</p>
+		
 
 	return (
 		<Table className="w-full border-separate border-spacing-0">

@@ -13,10 +13,11 @@ export default function App() {
 				<SearchToolbar onSearch={setCourseCode} />
 			</div>
 
-			<div className="mt-4 px-5 max-w-7xl mx-auto w-full">
-				<OfferingsTable courseCode={courseCode} />
-			</div>
-
+			{courseCode !== "" && (
+				<div className="mt-4 px-5 max-w-7xl mx-auto w-full">
+					<OfferingsTable courseCode={courseCode} />
+				</div>
+			)}
 		</div>
 	)
 }

@@ -10,8 +10,14 @@ export default function Navbar() {
                     </h1>
 
                 </div>
-
-                <Github className="w-5 h-5 md:w-6 md:h-6 cursor-pointer text-neutral-400 hover:text-white transition-colors" />
+                
+                <a
+                    href="https://github.com/hearts2hearts1/BetterFinder"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <Github className="w-5 h-5 md:w-6 md:h-6 cursor-pointer text-neutral-400 hover:text-white transition-colors" />
+                </a>
             </div>
         </nav>
     )
