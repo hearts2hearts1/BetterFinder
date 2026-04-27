@@ -5,12 +5,13 @@
     "permissions": ["storage", "tabs"],
     "action": {},
     "background": {
-        "service_worker": "background.js"
+        "service_worker": "background.js",
+        "type": "module" 
     },
     "content_scripts": [
         {
             "matches": ["https://archershub.dlsu.edu.ph/*"],
-            "js": ["api.js", "util.js"],
+            "js": ["api.js", "transformer.js", "parser.js"],
             "type": "module"
         }
     ]

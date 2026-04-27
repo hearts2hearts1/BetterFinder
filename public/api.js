@@ -1,4 +1,5 @@
-class CourseAPI {
+import { transformScheduleData } from "./transformer.js";
+export class CourseAPI {
     constructor(campus, acadSession) {
         this.campus = campus;
         this.acadSession = acadSession;
@@ -62,7 +63,7 @@ class CourseAPI {
         
         for (const c of cf) {
             const scheduleData = await this.fetchScheduleData(c.COURSE_CREATION_ID,c.SECTION_CREATION_ID);
-            courseSchedules.push(cleanScheduleData(courseCode, c, scheduleData));
+            courseSchedules.push(transformScheduleData(courseCode, c, scheduleData));
         }
 
         return courseSchedules;
