@@ -61,10 +61,12 @@ export class CourseAPI {
 
         const cf = await cfData.json()
         
-        for (const c of cf) {
-            const scheduleData = await this.fetchScheduleData(c.COURSE_CREATION_ID,c.SECTION_CREATION_ID);
-            courseSchedules.push(transformScheduleData(courseCode, c, scheduleData));
-        }
+        const schedulePromises = cf.map(c =>
+            this.fetchScheduleData(c.COURSE_CREATION_ID, c.SECTION_CREATION_ID)
+                .then(scheduleData => transformScheduleData(courseCode, c, scheduleData))
+        );
+        const schedules = await Promise.all(schedulePromises);
+        courseSchedules.push(...schedules);
 
         return courseSchedules;
     }
