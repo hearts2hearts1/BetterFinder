@@ -5,7 +5,6 @@ import path from 'path'
 import fs from 'fs'
 import { pathToFileURL } from 'url'
 
-const parserUrl      = pathToFileURL(path.resolve(__dirname, 'public/parser.js')).href
 const transformerUrl = pathToFileURL(path.resolve(__dirname, 'public/transformer.js')).href
 
 // Reconstructs the SCHEDULE string parseSchedule() expects from raw dated entries.
@@ -63,9 +62,8 @@ function localDataPlugin() {
             fs.readFileSync(path.join(dataRawDir, match, 'schedules.json'), 'utf-8')
           )
 
-          // Cache-bust on every request so edits to public/ are reflected immediately
           const t = Date.now()
-          const { parseCourseName }       = await import(`${parserUrl}?t=${t}`)
+          //const { parseCourseName }       = await import(`${parserUrl}?t=${t}`)
           const { transformScheduleData } = await import(`${transformerUrl}?t=${t}`)
 
           const data = rawSections.map((scheduleData) => {

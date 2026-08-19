@@ -7,7 +7,7 @@ chrome.action.onClicked.addListener(() => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === "FETCH_COURSE") {
         (async () => {
-            const api = new CourseAPI("7", "135");
+            const api = new CourseAPI("7", "155");
             await api.fetchCourseList();
             const schedules = await api.fetchCourseSchedules(request.courseCode);
 
