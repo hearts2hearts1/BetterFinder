@@ -1,52 +1,85 @@
 import { parseCourseName, parseSchedule } from "./parser.js";
 
+export function transformScheduleData(courseCode, cfData, scheduleData) {
+  const scheduleSlots = extractScheduleSlots(scheduleData);
+  const parsedCourseNames = scheduleSlots
+    .map((item) => parseCourseName(item.COURSE_NAME));
+
+  const remarks = getRemarks(parsedCourseNames);
+  const schedule = parseSchedule(cfData.SCHEDULE);
+  const room = getRoom(parsedCourseNames, remarks);
+
+  return buildScheduleObject(
+    courseCode,
+    cfData,
+    parsedCourseNames,
+    schedule,
+    room,
+    remarks,
+  );
+}
+
 function extractScheduleSlots(scheduleData) {
-  // one day scheds
-  if (!scheduleData[13]) {
-    return [scheduleData[0]];
+  const slots = [];
+  const rooms = new Set();
+  
+  for (const item of scheduleData) {
+    const parsed = parseCourseName(item.COURSE_NAME);
+    if (!rooms.has(parsed.room)) {
+      rooms.add(parsed.room);
+      slots.push(item);
+    }
   }
 
-  // 3 units, two day scheds
-  if (!scheduleData[28]) {
-    return [scheduleData[0], scheduleData[13]];
+  if (slots.length === 0 && scheduleData.length > 0) {
+    slots.push(scheduleData[0]);
   }
 
-  // 5 units, four day scheds
-  return [scheduleData[0], scheduleData[28]];
+  return slots;
 }
 
 function isRoom(section) {
-  console.log(section.SECTION_NAME)
   return (
+    section.room &&
     section.room.toUpperCase() !== "ONLINE" &&
     section.room.toUpperCase() !== "-"
   );
 }
 
 function isOnline(section) {
-  return section.room.toUpperCase() === "ONLINE";
+  return section.room && section.room.toUpperCase() === "ONLINE";
 }
 
-function getRemarks(selected) {
-  if (selected[1] === undefined)
-    return selected[0].room === "Online" ? "FOL" : "PIP";
-  if (isRoom(selected[0]) && isOnline(selected[1])) return "HYB";
-  if (!isRoom(selected[0]) || !isRoom(selected[1])) return "FOL";
+function getRemarks(parsedCourseNames) {
+  if (parsedCourseNames.length === 1) {
+    return isOnline(parsedCourseNames[0]) ? "FOL" : "PIP";
+  }
+
+  const hasRoom = parsedCourseNames.some(isRoom);
+  const hasOnline = parsedCourseNames.some(isOnline);
+  
+  if (hasRoom && hasOnline) return "HYB";
+  if (!hasRoom) return "FOL";
 
   return "PIP";
 }
 
 function getRoom(parsedCourseNames, remarks) {
-  const first = parsedCourseNames?.[0];
-  const second = parsedCourseNames?.[1];
+  const physicalRooms = [...new Set(
+    parsedCourseNames
+      .filter(s => s.room && s.room.toUpperCase() !== "ONLINE" && s.room !== "-")
+      .map(s => s.room)
+  )];
 
   switch (remarks) {
     case "FOL":
       return "Online";
     case "PIP":
-      return first?.room;
     case "HYB":
-      return isRoom(first) ? first?.room : second?.room;
+      if (physicalRooms.length > 0) {
+        return physicalRooms.join(" / ");
+      }
+      return parsedCourseNames.find(s => s.room && s.room !== "-")?.room || parsedCourseNames[0]?.room;
     default:
       return null;
   }
@@ -73,24 +106,4 @@ function buildScheduleObject(
     capacity: cfData.CAPACITY,
     remarks: remarks,
   };
-}
-
-export function transformScheduleData(courseCode, cfData, scheduleData) {
-  const scheduleSlots = extractScheduleSlots(scheduleData);
-  const parsedCourseNames = scheduleSlots
-    .slice(0, 2)
-    .map((item) => parseCourseName(item.COURSE_NAME));
-
-  const remarks = getRemarks(parsedCourseNames);
-  const schedule = parseSchedule(cfData.SCHEDULE);
-  const room = getRoom(parsedCourseNames, remarks);
-
-  return buildScheduleObject(
-    courseCode,
-    cfData,
-    parsedCourseNames,
-    schedule,
-    room,
-    remarks,
-  );
 }
