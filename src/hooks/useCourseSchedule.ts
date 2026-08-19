@@ -25,22 +25,37 @@ export function useCourseSchedule(courseCode: string) {
         if (!courseCode) return;
 
         setLoading(true);
-        chrome.runtime.sendMessage(
-            { type: "FETCH_COURSE", courseCode },
-            (response) => {
-                if (chrome.runtime.lastError) {
-                    setError(chrome.runtime.lastError.message ?? "Unknown error");
+
+        if (import.meta.env.DEV) {
+            fetch(`/api/course/${encodeURIComponent(courseCode)}`)
+                .then((res) => res.json())
+                .then((response) => {
+                    if (response?.success) {
+                        setData(response.data);
+                    } else {
+                        setError(response?.error ?? "Course not found");
+                    }
+                })
+                .catch((err) => setError(err.message ?? "Fetch failed"))
+                .finally(() => setLoading(false));
+        } else {
+            chrome.runtime.sendMessage(
+                { type: "FETCH_COURSE", courseCode },
+                (response) => {
+                    if (chrome.runtime.lastError) {
+                        setError(chrome.runtime.lastError.message ?? "Unknown error");
+                        setLoading(false);
+                        return;
+                    }
+                    if (response?.success) {
+                        setData(response.data);
+                    } else {
+                        setError("Failed to fetch schedules");
+                    }
                     setLoading(false);
-                    return;
                 }
-                if (response?.success) {
-                    setData(response.data);
-                } else {
-                    setError("Failed to fetch schedules");
-                }
-                setLoading(false);
-            }
-        );
+            );
+        }
     }, [courseCode]);
 
     return { data, loading, error };
